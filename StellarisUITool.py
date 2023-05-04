@@ -32,13 +32,8 @@ def parse_gui_elements(code):
     "background"
   ]
 
-  # Define a dictionary to store custom patterns for each element type
-  custom_patterns = {
-    "instantTextBoxType": r"instantTextBoxType\s+=\s+\{{[\s\S]*?([^}}]+)}}",
-  }
-
   for element_type in element_types:
-    pattern = custom_patterns.get(element_type, fr"{element_type}\s+=\s+\{{[\s\S]*?([^}}]+)\s*\}}")
+    pattern = fr"{element_type}\s+=\s+\{{[\s\S]*?([^}}]+)\s*\}}"
     for match in re.finditer(pattern, code):
       properties = {}
       for prop_match in re.finditer(r"(\w+)\s+=\s+((\{{\s*[^}}]*\s*\}})|(\"[^\"]*\")|(\S+))", match.group(1), re.MULTILINE):
@@ -54,7 +49,7 @@ def parse_gui_elements(code):
 def generate_image(gui_elements):
   image = Image.new("RGBA", (974, 680), (0, 0, 0, 0))
   draw = ImageDraw.Draw(image)
-  background_image = None  # 追加
+  background_image = None
 
   for element_type, properties in gui_elements:
     if element_type == "containerWindowType":
@@ -109,25 +104,107 @@ def generate_image(gui_elements):
     if element_type == "buttonType":
       x = int(properties["x"])
       y = int(properties["y"])
-      quad_texture_sprite = properties["quadTextureSprite"]
-      img_path = f"./img/{quad_texture_sprite}.png"
-      if os.path.exists(img_path):
-        img_button = Image.open(img_path)
-        if img_button.mode == "RGBA":
-          mask = img_button.split()[3]  # 透過マスクを取得
-          image.paste(img_button, (x, y), mask)  # 透過マスクを適用
+      if "quadTextureSprite" in properties:
+        quad_texture_sprite = properties["quadTextureSprite"]
+        img_path = f"./img/{quad_texture_sprite}.png"
+        if os.path.exists(img_path):
+          img_button = Image.open(img_path)
+          if img_button.mode == "RGBA":
+            mask = img_button.split()[3]  # 透過マスクを取得
+            image.paste(img_button, (x, y), mask)  # 透過マスクを適用
+          else:
+            image.paste(img_button, (x, y))
         else:
-          image.paste(img_button, (x, y))
-      else:
-        print(f"画像が見つかりません: {img_path}")
-        img_button = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
-        image.paste(img_button, (x, y), img_button)
+          print(f"画像が見つかりません: {img_path}")
+          img_button = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
+          image.paste(img_button, (x, y), img_button)
+      elif "spriteType" in properties:
+        sprite_Type = properties["spriteType"]
+        img_path = f"./img/{sprite_Type}.png"
+        if os.path.exists(img_path):
+          img_button = Image.open(img_path)
+          if img_button.mode == "RGBA":
+            mask = img_button.split()[3]  # 透過マスクを取得
+            image.paste(img_button, (x, y), mask)  # 透過マスクを適用
+          else:
+            image.paste(img_button, (x, y))
+        else:
+          print(f"画像が見つかりません: {img_path}")
+          img_button = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
+          image.paste(img_button, (x, y), img_button)
 
-    elif element_type == "instantTextBoxType":
+    if element_type == "effectButtonType":
+      x = int(properties["x"])
+      y = int(properties["y"])
+      if "quadTextureSprite" in properties:
+        quad_texture_sprite = properties["quadTextureSprite"]
+        img_path = f"./img/{quad_texture_sprite}.png"
+        if os.path.exists(img_path):
+          img_effect_button = Image.open(img_path)
+          if img_effect_button.mode == "RGBA":
+            mask = img_effect_button.split()[3]  # 透過マスクを取得
+            image.paste(img_effect_button, (x, y), mask)  # 透過マスクを適用
+          else:
+            image.paste(img_effect_button, (x, y))
+        else:
+          print(f"画像が見つかりません: {img_path}")
+          img_effect_button = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
+          image.paste(img_effect_button, (x, y), img_effect_button)
+      elif "spriteType" in properties:
+        sprite_Type = properties["spriteType"]
+        img_path = f"./img/{sprite_Type}.png"
+        if os.path.exists(img_path):
+          img_effect_button = Image.open(img_path)
+          if img_effect_button.mode == "RGBA":
+            mask = img_effect_button.split()[3]  # 透過マスクを取得
+            image.paste(img_effect_button, (x, y), mask)  # 透過マスクを適用
+          else:
+            image.paste(img_effect_button, (x, y))
+        else:
+          print(f"画像が見つかりません: {img_path}")
+          img_effect_button = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
+          image.paste(img_effect_button, (x, y), img_effect_button)
+
+    if element_type == "overlappingElementsBoxType":
+      x = int(properties["x"])
+      y = int(properties["y"])
+      if "quadTextureSprite" in properties:
+        quad_texture_sprite = properties["quadTextureSprite"]
+        img_path = f"./img/{quad_texture_sprite}.png"
+        if os.path.exists(img_path):
+          img_overlapping_elements_box = Image.open(img_path)
+          if img_overlapping_elements_box.mode == "RGBA":
+            mask = img_overlapping_elements_box.split()[3]  # 透過マスクを取得
+            image.paste(img_overlapping_elements_box, (x, y), mask)  # 透過マスクを適用
+          else:
+            image.paste(img_overlapping_elements_box, (x, y))
+        else:
+          print(f"画像が見つかりません: {img_path}")
+          img_overlapping_elements_box = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
+          image.paste(img_overlapping_elements_box, (x, y), img_overlapping_elements_box)
+      elif "spriteType" in properties:
+        sprite_Type = properties["spriteType"]
+        img_path = f"./img/{sprite_Type}.png"
+        if os.path.exists(img_path):
+          img_overlapping_elements_box = Image.open(img_path)
+          if img_overlapping_elements_box.mode == "RGBA":
+            mask = img_overlapping_elements_box.split()[3]  # 透過マスクを取得
+            image.paste(img_overlapping_elements_box, (x, y), mask)  # 透過マスクを適用
+          else:
+            image.paste(img_overlapping_elements_box, (x, y))
+        else:
+          print(f"画像が見つかりません: {img_path}")
+          img_overlapping_elements_box = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
+          image.paste(img_overlapping_elements_box, (x, y), img_overlapping_elements_box)
+
+    if element_type == "instantTextBoxType":
       x = int(properties["x"])
       y = int(properties["y"])
       text = properties["text"]
-      font_name = properties["fontName"]
+      if "fontName" in properties:
+        font_name = properties["fontName"]
+      elif "font" in properties:
+        font_name = properties["font"]
 
       if font_name == "cg_16b":
         font_path = os.path.join("C:\\", "Windows", "Fonts", "arial.ttf")
@@ -137,12 +214,14 @@ def generate_image(gui_elements):
         font_size = 24
       else:
         font_path = os.path.join("C:\\", "Windows", "Fonts", "arial.ttf")
-        font_size = 16
+        font_size = 24
 
       font = ImageFont.truetype(font_path, font_size)
-      draw.text((x, y), text, font=font, fill=(255, 255, 255))
+      text_image = Image.new("RGBA", image.size, (255, 255, 255, 0))
+      text_draw = ImageDraw.Draw(text_image)
+      text_draw.text((x, y), text, font=font, fill=(0, 0, 0, 255))
+      image = Image.alpha_composite(image, text_image)
 
-  # 背景画像を最後に貼り付ける
   if background_image:
     if background_image.mode == "RGBA":
       mask = background_image.split()[3]
@@ -153,15 +232,17 @@ def generate_image(gui_elements):
   return image
 
 def show_image():
-  code = text_input.get("1.0", "end")
-  print(f"Code:\n{code}\n")
-  gui_elements = parse_gui_elements(code)
-  print(f"GUI Elements:\n{gui_elements}\n")
-  image = generate_image(gui_elements)
+	code = text_input.get("1.0", "end")
+	code = re.sub(r'position\s*=\s*\{', '', code)
+	code = re.sub(r'(y\s*=\s*\d+)\s*\}', r'\1', code)
+	print(f"Code:\n{code}\n")
+	gui_elements = parse_gui_elements(code)
+	print(f"GUI Elements:\n{gui_elements}\n")
+	image = generate_image(gui_elements)
 
-  tk_image = ImageTk.PhotoImage(image)
-  label.config(image=tk_image)
-  label.image = tk_image
+	tk_image = ImageTk.PhotoImage(image)
+	label.config(image=tk_image)
+	label.image = tk_image
 
 def get_image_files():
   img_dir = "img"
