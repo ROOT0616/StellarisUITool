@@ -220,7 +220,6 @@ def generate_image(gui_elements):
       text_image = Image.new("RGBA", image.size, (255, 255, 255, 0))
       text_draw = ImageDraw.Draw(text_image)
       text_draw.text((x, y), text, font=font, fill=(0, 0, 0, 255))
-      image = Image.alpha_composite(image, text_image)
 
   if background_image:
     if background_image.mode == "RGBA":
@@ -228,6 +227,8 @@ def generate_image(gui_elements):
       image.paste(background_image, (0, 0), mask)
     else:
       image.paste(background_image, (0, 0))
+
+    image = Image.alpha_composite(image, text_image)
 
   return image
 
