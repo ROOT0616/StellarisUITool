@@ -3,6 +3,22 @@ import os
 import tkinter as tk
 from tkinter import filedialog
 from PIL import Image, ImageDraw, ImageFont, ImageTk
+from pathlib import Path
+
+def get_system_font_path(font_name):
+  system_fonts_path = ""
+
+  if os.name == "nt":
+    system_fonts_path = Path("C:/Windows/Fonts")
+  elif os.name == "posix":
+    system_fonts_path = Path("/usr/share/fonts")
+
+  font_path = system_fonts_path / f"{font_name}.ttf"
+
+  if not font_path.exists():
+    font_path = system_fonts_path / "arial.ttf"
+
+  return str(font_path)
 
 def parse_gui_elements(code):
   gui_elements = []
@@ -207,13 +223,13 @@ def generate_image(gui_elements):
         font_name = properties["font"]
 
       if font_name == "cg_16b":
-        font_path = os.path.join("C:\\", "Windows", "Fonts", "arial.ttf")
+        font_path = get_system_font_path("arial")
         font_size = 16
       elif font_name == "malgun_goth_24":
-        font_path = os.path.join("C:\\", "Windows", "Fonts", "arial.ttf")
+        font_path = get_system_font_path("arial")
         font_size = 24
       else:
-        font_path = os.path.join("C:\\", "Windows", "Fonts", "arial.ttf")
+        font_path = get_system_font_path("arial")
         font_size = 24
 
       font = ImageFont.truetype(font_path, font_size)
