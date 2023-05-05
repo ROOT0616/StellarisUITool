@@ -88,6 +88,7 @@ def generate_image(gui_elements):
     if element_type == "iconType":
       x = int(properties["x"])
       y = int(properties["y"])
+      icon_image = Image.new("RGBA", image.size, (0, 0, 0, 0))
       if "quadTextureSprite" in properties:
         quad_texture_sprite = properties["quadTextureSprite"]
         img_path = f"./img/{quad_texture_sprite}.png"
@@ -95,13 +96,13 @@ def generate_image(gui_elements):
           img_icon = Image.open(img_path)
           if img_icon.mode == "RGBA":
             mask = img_icon.split()[3]  # 透過マスクを取得
-            image.paste(img_icon, (x, y), mask)  # 透過マスクを適用
+            icon_image.paste(img_icon, (x, y), mask)  # 透過マスクを適用
           else:
-            image.paste(img_icon, (x, y))
+            icon_image.paste(img_icon, (x, y))
         else:
           print(f"画像が見つかりません: {img_path}")
           img_icon = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
-          image.paste(img_icon, (x, y), img_icon)
+          icon_image.paste(img_icon, (x, y), img_icon)
       elif "spriteType" in properties:
         sprite_Type = properties["spriteType"]
         img_path = f"./img/{sprite_Type}.png"
@@ -109,17 +110,18 @@ def generate_image(gui_elements):
           img_icon = Image.open(img_path)
           if img_icon.mode == "RGBA":
             mask = img_icon.split()[3]  # 透過マスクを取得
-            image.paste(img_icon, (x, y), mask)  # 透過マスクを適用
+            icon_image.paste(img_icon, (x, y), mask)  # 透過マスクを適用
           else:
-            image.paste(img_icon, (x, y))
+            icon_image.paste(img_icon, (x, y))
         else:
           print(f"画像が見つかりません: {img_path}")
           img_icon = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
-          image.paste(img_icon, (x, y), img_icon)
+          icon_image.paste(img_icon, (x, y), img_icon)
 
     if element_type == "buttonType":
       x = int(properties["x"])
       y = int(properties["y"])
+      button_image = Image.new("RGBA", image.size, (0, 0, 0, 0))
       if "quadTextureSprite" in properties:
         quad_texture_sprite = properties["quadTextureSprite"]
         img_path = f"./img/{quad_texture_sprite}.png"
@@ -127,13 +129,13 @@ def generate_image(gui_elements):
           img_button = Image.open(img_path)
           if img_button.mode == "RGBA":
             mask = img_button.split()[3]  # 透過マスクを取得
-            image.paste(img_button, (x, y), mask)  # 透過マスクを適用
+            button_image.paste(img_button, (x, y), mask)  # 透過マスクを適用
           else:
-            image.paste(img_button, (x, y))
+            button_image.paste(img_button, (x, y))
         else:
           print(f"画像が見つかりません: {img_path}")
           img_button = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
-          image.paste(img_button, (x, y), img_button)
+          button_image.paste(img_button, (x, y), img_button)
       elif "spriteType" in properties:
         sprite_Type = properties["spriteType"]
         img_path = f"./img/{sprite_Type}.png"
@@ -141,13 +143,13 @@ def generate_image(gui_elements):
           img_button = Image.open(img_path)
           if img_button.mode == "RGBA":
             mask = img_button.split()[3]  # 透過マスクを取得
-            image.paste(img_button, (x, y), mask)  # 透過マスクを適用
+            button_image.paste(img_button, (x, y), mask)  # 透過マスクを適用
           else:
-            image.paste(img_button, (x, y))
+            button_image.paste(img_button, (x, y))
         else:
           print(f"画像が見つかりません: {img_path}")
           img_button = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
-          image.paste(img_button, (x, y), img_button)
+          button_image.paste(img_button, (x, y), img_button)
 
     if element_type == "effectButtonType":
       x = int(properties["x"])
@@ -245,6 +247,8 @@ def generate_image(gui_elements):
       image.paste(background_image, (0, 0))
 
     image = Image.alpha_composite(image, text_image)
+    image = Image.alpha_composite(image, icon_image)
+    image = Image.alpha_composite(image, button_image)
 
   return image
 
