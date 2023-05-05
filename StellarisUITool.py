@@ -66,6 +66,13 @@ def generate_image(gui_elements):
   image = Image.new("RGBA", (974, 680), (0, 0, 0, 0))
   draw = ImageDraw.Draw(image)
   background_image = None
+  icon_image = Image.new("RGBA", image.size, (0, 0, 0, 0))
+  button_image = Image.new("RGBA", image.size, (0, 0, 0, 0))
+  effect_button_image = Image.new("RGBA", image.size, (0, 0, 0, 0))
+  text_image = Image.new("RGBA", image.size, (255, 255, 255, 0))
+  icon_images = []  # アイコン画像を保持するリスト
+  button_images = []  # ボタン画像を保持するリスト
+  text_images = []  # テキスト画像を保持するリスト
 
   for element_type, properties in gui_elements:
     if element_type == "containerWindowType":
@@ -97,12 +104,15 @@ def generate_image(gui_elements):
           if img_icon.mode == "RGBA":
             mask = img_icon.split()[3]  # 透過マスクを取得
             icon_image.paste(img_icon, (x, y), mask)  # 透過マスクを適用
+            icon_images.append(icon_image)
           else:
             icon_image.paste(img_icon, (x, y))
+            icon_images.append(icon_image)
         else:
           print(f"画像が見つかりません: {img_path}")
           img_icon = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
           icon_image.paste(img_icon, (x, y), img_icon)
+          icon_images.append(icon_image)
       elif "spriteType" in properties:
         sprite_Type = properties["spriteType"]
         img_path = f"./img/{sprite_Type}.png"
@@ -111,12 +121,15 @@ def generate_image(gui_elements):
           if img_icon.mode == "RGBA":
             mask = img_icon.split()[3]  # 透過マスクを取得
             icon_image.paste(img_icon, (x, y), mask)  # 透過マスクを適用
+            icon_images.append(icon_image)
           else:
             icon_image.paste(img_icon, (x, y))
+            icon_images.append(icon_image)
         else:
           print(f"画像が見つかりません: {img_path}")
           img_icon = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
           icon_image.paste(img_icon, (x, y), img_icon)
+          icon_images.append(icon_image)
 
     if element_type == "buttonType":
       x = int(properties["x"])
@@ -130,12 +143,15 @@ def generate_image(gui_elements):
           if img_button.mode == "RGBA":
             mask = img_button.split()[3]  # 透過マスクを取得
             button_image.paste(img_button, (x, y), mask)  # 透過マスクを適用
+            button_images.append(button_image)
           else:
             button_image.paste(img_button, (x, y))
+            button_images.append(button_image)
         else:
           print(f"画像が見つかりません: {img_path}")
           img_button = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
           button_image.paste(img_button, (x, y), img_button)
+          button_images.append(button_image)
       elif "spriteType" in properties:
         sprite_Type = properties["spriteType"]
         img_path = f"./img/{sprite_Type}.png"
@@ -144,76 +160,15 @@ def generate_image(gui_elements):
           if img_button.mode == "RGBA":
             mask = img_button.split()[3]  # 透過マスクを取得
             button_image.paste(img_button, (x, y), mask)  # 透過マスクを適用
+            button_images.append(button_image)
           else:
             button_image.paste(img_button, (x, y))
+            button_images.append(button_image)
         else:
           print(f"画像が見つかりません: {img_path}")
           img_button = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
           button_image.paste(img_button, (x, y), img_button)
-
-    if element_type == "effectButtonType":
-      x = int(properties["x"])
-      y = int(properties["y"])
-      if "quadTextureSprite" in properties:
-        quad_texture_sprite = properties["quadTextureSprite"]
-        img_path = f"./img/{quad_texture_sprite}.png"
-        if os.path.exists(img_path):
-          img_effect_button = Image.open(img_path)
-          if img_effect_button.mode == "RGBA":
-            mask = img_effect_button.split()[3]  # 透過マスクを取得
-            image.paste(img_effect_button, (x, y), mask)  # 透過マスクを適用
-          else:
-            image.paste(img_effect_button, (x, y))
-        else:
-          print(f"画像が見つかりません: {img_path}")
-          img_effect_button = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
-          image.paste(img_effect_button, (x, y), img_effect_button)
-      elif "spriteType" in properties:
-        sprite_Type = properties["spriteType"]
-        img_path = f"./img/{sprite_Type}.png"
-        if os.path.exists(img_path):
-          img_effect_button = Image.open(img_path)
-          if img_effect_button.mode == "RGBA":
-            mask = img_effect_button.split()[3]  # 透過マスクを取得
-            image.paste(img_effect_button, (x, y), mask)  # 透過マスクを適用
-          else:
-            image.paste(img_effect_button, (x, y))
-        else:
-          print(f"画像が見つかりません: {img_path}")
-          img_effect_button = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
-          image.paste(img_effect_button, (x, y), img_effect_button)
-
-    if element_type == "overlappingElementsBoxType":
-      x = int(properties["x"])
-      y = int(properties["y"])
-      if "quadTextureSprite" in properties:
-        quad_texture_sprite = properties["quadTextureSprite"]
-        img_path = f"./img/{quad_texture_sprite}.png"
-        if os.path.exists(img_path):
-          img_overlapping_elements_box = Image.open(img_path)
-          if img_overlapping_elements_box.mode == "RGBA":
-            mask = img_overlapping_elements_box.split()[3]  # 透過マスクを取得
-            image.paste(img_overlapping_elements_box, (x, y), mask)  # 透過マスクを適用
-          else:
-            image.paste(img_overlapping_elements_box, (x, y))
-        else:
-          print(f"画像が見つかりません: {img_path}")
-          img_overlapping_elements_box = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
-          image.paste(img_overlapping_elements_box, (x, y), img_overlapping_elements_box)
-      elif "spriteType" in properties:
-        sprite_Type = properties["spriteType"]
-        img_path = f"./img/{sprite_Type}.png"
-        if os.path.exists(img_path):
-          img_overlapping_elements_box = Image.open(img_path)
-          if img_overlapping_elements_box.mode == "RGBA":
-            mask = img_overlapping_elements_box.split()[3]  # 透過マスクを取得
-            image.paste(img_overlapping_elements_box, (x, y), mask)  # 透過マスクを適用
-          else:
-            image.paste(img_overlapping_elements_box, (x, y))
-        else:
-          print(f"画像が見つかりません: {img_path}")
-          img_overlapping_elements_box = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
-          image.paste(img_overlapping_elements_box, (x, y), img_overlapping_elements_box)
+          button_images.append(button_image)
 
     if element_type == "instantTextBoxType":
       x = int(properties["x"])
@@ -236,6 +191,7 @@ def generate_image(gui_elements):
 
       font = ImageFont.truetype(font_path, font_size)
       text_image = Image.new("RGBA", image.size, (255, 255, 255, 0))
+      text_images.append(text_image)
       text_draw = ImageDraw.Draw(text_image)
       text_draw.text((x, y), text, font=font, fill=(0, 0, 0, 255))
 
@@ -246,24 +202,43 @@ def generate_image(gui_elements):
     else:
       image.paste(background_image, (0, 0))
 
+  # テキスト画像をすべて合成
+  for text_image in text_images:
     image = Image.alpha_composite(image, text_image)
+  # アイコン画像をすべて合成
+  for icon_image in icon_images:
     image = Image.alpha_composite(image, icon_image)
+  # ボタン画像をすべて合成
+  for button_image in button_images:
     image = Image.alpha_composite(image, button_image)
 
   return image
 
-def show_image():
-	code = text_input.get("1.0", "end")
-	code = re.sub(r'position\s*=\s*\{', '', code)
-	code = re.sub(r'(y\s*=\s*\d+)\s*\}', r'\1', code)
-	print(f"Code:\n{code}\n")
-	gui_elements = parse_gui_elements(code)
-	print(f"GUI Elements:\n{gui_elements}\n")
-	image = generate_image(gui_elements)
 
-	tk_image = ImageTk.PhotoImage(image)
-	label.config(image=tk_image)
-	label.image = tk_image
+def zoom_image(scale):  # 新しい関数 - 画像をズームする
+  global current_image
+  if current_image is not None:
+    new_width = int(current_image.width * scale)
+    new_height = int(current_image.height * scale)
+    resized_image = current_image.resize((new_width, new_height), Image.LANCZOS)
+    tk_image = ImageTk.PhotoImage(resized_image)
+    label.config(image=tk_image)
+    label.image = tk_image
+
+def show_image():
+  global current_image
+  code = text_input.get("1.0", "end")
+  code = re.sub(r'position\s*=\s*\{', '', code)
+  code = re.sub(r'(y\s*=\s*\d+)\s*\}', r'\1', code)
+  print(f"Code:\n{code}\n")
+  gui_elements = parse_gui_elements(code)
+  print(f"GUI Elements:\n{gui_elements}\n")
+  current_image = generate_image(gui_elements)
+  image = generate_image(gui_elements)
+
+  tk_image = ImageTk.PhotoImage(image)
+  label.config(image=tk_image)
+  label.image = tk_image
 
 def get_image_files():
   img_dir = "img"
@@ -300,8 +275,14 @@ image_listbox.pack(side=tk.LEFT, padx=(0, 10))
 frame_right = tk.Frame(root)
 frame_right.pack(side=tk.RIGHT, padx=10, pady=10)
 
-label = tk.Label(frame_right)
+label = tk.Label(frame_right, bg="SystemButtonFace")
 label.pack(side=tk.TOP, padx=10, pady=10)
+
+btn_zoom_in = tk.Button(frame_right, text="Zoom In", command=lambda: zoom_image(1.5))
+btn_zoom_in.pack(side=tk.BOTTOM, pady=5)
+
+btn_zoom_out = tk.Button(frame_right, text="Zoom Out", command=lambda: zoom_image(0.8))
+btn_zoom_out.pack(side=tk.BOTTOM, pady=5)
 
 btn = tk.Button(frame_right, text="Analyze", command=show_image)
 btn.pack(side=tk.BOTTOM, pady=10)
