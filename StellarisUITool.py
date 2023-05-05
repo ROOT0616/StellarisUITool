@@ -277,23 +277,36 @@ def show_selected_image():
 root = tk.Tk()
 root.title("GUI Analyzer")
 
-text_input = tk.Text(root, wrap=tk.WORD, width=150, height=75)
-text_input.pack(side=tk.LEFT, padx=10, pady=10)
+frame_left = tk.Frame(root)
+frame_left.pack(side=tk.LEFT, padx=10, pady=10)
 
-image_listbox = tk.Listbox(root)
-image_listbox.pack(side=tk.LEFT, padx=10, pady=10)
+text_input = tk.Text(frame_left, wrap=tk.NONE, width=100, height=80)
+text_input.grid(row=0, column=0, padx=(0, 10))
+
+text_scrollbar = tk.Scrollbar(frame_left, orient=tk.HORIZONTAL, command=text_input.xview)
+text_scrollbar.grid(row=1, column=0, sticky=tk.EW)
+text_input.config(xscrollcommand=text_scrollbar.set)
+
+frame_middle = tk.Frame(root)
+frame_middle.pack(side=tk.LEFT, padx=10, pady=10)
+
+image_listbox = tk.Listbox(frame_middle, width=30, height=30)
+image_listbox.pack(side=tk.LEFT, padx=(0, 10))
+
+frame_right = tk.Frame(root)
+frame_right.pack(side=tk.RIGHT, padx=10, pady=10)
+
+label = tk.Label(frame_right)
+label.pack(side=tk.TOP, padx=10, pady=10)
+
+btn = tk.Button(frame_right, text="Analyze", command=show_image)
+btn.pack(side=tk.BOTTOM, pady=10)
+
+btn_show_image = tk.Button(frame_middle, text="Show Image", command=show_selected_image)
+btn_show_image.pack(side=tk.BOTTOM, pady=10)
 
 image_files = get_image_files()
 for image_file in image_files:
   image_listbox.insert(tk.END, image_file)
-
-label = tk.Label(root)
-label.pack(side=tk.RIGHT, padx=10, pady=10)
-
-btn = tk.Button(root, text="Analyze", command=show_image)
-btn.pack(side=tk.BOTTOM, pady=10)
-
-btn_show_image = tk.Button(root, text="Show Image", command=show_selected_image)
-btn_show_image.pack(side=tk.BOTTOM, pady=10)
 
 root.mainloop()
