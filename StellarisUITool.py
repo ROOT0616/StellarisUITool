@@ -22,7 +22,6 @@ def get_system_font_path(font_name):
 
 def parse_gui_elements(code):
   gui_elements = []
-
   # Add new element types to this list
   element_types = [
     "containerWindowType",
@@ -68,7 +67,6 @@ def generate_image(gui_elements):
   background_image = None
   icon_image = Image.new("RGBA", image.size, (0, 0, 0, 0))
   button_image = Image.new("RGBA", image.size, (0, 0, 0, 0))
-  effect_button_image = Image.new("RGBA", image.size, (0, 0, 0, 0))
   text_image = Image.new("RGBA", image.size, (255, 255, 255, 0))
   icon_images = []  # アイコン画像を保持するリスト
   button_images = []  # ボタン画像を保持するリスト
@@ -78,7 +76,9 @@ def generate_image(gui_elements):
     if element_type == "containerWindowType":
       if "width" in properties and "height" in properties:
         width = int(properties["width"])
+        def_width = width
         height = int(properties["height"])
+        def_height = height
         image = Image.new("RGBA", (width, height), (0, 0, 0, 0))
         draw = ImageDraw.Draw(image)
 
@@ -87,7 +87,7 @@ def generate_image(gui_elements):
       img_path = f"./img/{quad_texture_sprite}.png"
       if os.path.exists(img_path):
         background_image = Image.open(img_path)
-        background_image = background_image.resize((width, height), Image.LANCZOS)
+        background_image = background_image.resize((def_width, def_height), Image.LANCZOS)
       else:
         print(f"画像が見つかりません: {img_path}")
         background_image = Image.new("RGBA", (width, height), (0, 0, 0, 0))
@@ -134,12 +134,20 @@ def generate_image(gui_elements):
     if element_type == "buttonType":
       x = int(properties["x"])
       y = int(properties["y"])
+      if "orientation" in properties:
+        orientation = properties["orientation"]
+        x, y = apply_orientation(x, y, width, height, orientation, def_width, def_height)
+        name = properties["name"]
+        print(f"{name} : x, y : {x} , {y}")
       button_image = Image.new("RGBA", image.size, (0, 0, 0, 0))
       if "quadTextureSprite" in properties:
         quad_texture_sprite = properties["quadTextureSprite"]
         img_path = f"./img/{quad_texture_sprite}.png"
         if os.path.exists(img_path):
           img_button = Image.open(img_path)
+          width, height = img_button.size
+          width_third = width // 3
+          img_button = img_button.crop((width_third, 0, width_third * 2, height))
           if img_button.mode == "RGBA":
             mask = img_button.split()[3]  # 透過マスクを取得
             button_image.paste(img_button, (x, y), mask)  # 透過マスクを適用
@@ -157,6 +165,9 @@ def generate_image(gui_elements):
         img_path = f"./img/{sprite_Type}.png"
         if os.path.exists(img_path):
           img_button = Image.open(img_path)
+          width, height = img_button.size
+          width_third = width // 3
+          img_button = img_button.crop((width_third, 0, width_third * 2, height))
           if img_button.mode == "RGBA":
             mask = img_button.split()[3]  # 透過マスクを取得
             button_image.paste(img_button, (x, y), mask)  # 透過マスクを適用
@@ -214,6 +225,21 @@ def generate_image(gui_elements):
 
   return image
 
+def apply_orientation(x, y, width, height, orientation, def_width, def_height):
+  width = def_width
+  height = def_height
+  if orientation == "UPPER_LEFT":
+    print(f"UPPER_LEFT: x, y : {x} , {y}")
+    return x, y
+  elif orientation == "UPPER_RIGHT":
+    print(f"UPPER_RIGHT: x, y : {x} + {width}, {y}")
+    return  x + width, y
+  elif orientation == "LOWER_LEFT":
+    return x,  y + height
+  elif orientation == "LOWER_RIGHT":
+    return x + width, y + height
+  else:
+    return x, y
 
 def zoom_image(scale):  # 新しい関数 - 画像をズームする
   global current_image
