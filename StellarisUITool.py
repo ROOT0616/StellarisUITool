@@ -63,7 +63,6 @@ def parse_gui_elements(code):
 
 def generate_image(gui_elements):
   image = Image.new("RGBA", (974, 680), (0, 0, 0, 0))
-  draw = ImageDraw.Draw(image)
   background_image = None
   icon_image = Image.new("RGBA", image.size, (0, 0, 0, 0))
   button_image = Image.new("RGBA", image.size, (0, 0, 0, 0))
@@ -279,6 +278,16 @@ def show_selected_image():
   label.config(image=tk_image)
   label.image = tk_image
 
+def save_image():
+  global current_image
+  if current_image is not None:
+    save_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG files", "*.png"), ("All files", "*.*")])
+    if save_path:
+      current_image.save(save_path)
+      print(f"Image saved as: {save_path}")
+  else:
+    print("No image to save.")
+
 root = tk.Tk()
 root.title("GUI Analyzer")
 
@@ -309,6 +318,9 @@ btn_zoom_in.pack(side=tk.BOTTOM, pady=5)
 
 btn_zoom_out = tk.Button(frame_right, text="Zoom Out", command=lambda: zoom_image(0.8))
 btn_zoom_out.pack(side=tk.BOTTOM, pady=5)
+
+btn_save_image = tk.Button(frame_right, text="Save Image", command=save_image)
+btn_save_image.pack(side=tk.BOTTOM, pady=10)
 
 btn = tk.Button(frame_right, text="Analyze", command=show_image)
 btn.pack(side=tk.BOTTOM, pady=10)
